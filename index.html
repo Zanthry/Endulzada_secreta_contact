@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Endulzada Navideña</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #fff6e3 30%, #bfd8b8 100%);
+    color: #222;
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 24px;
+    border-radius: 15px;
+    box-shadow: 0 2px 18px rgb(40 70 40 / 0.15);
+    border: 3px solid #d63447;
+  }
+  h1 {
+    color: #d63447;
+    text-align: center;
+    font-family: 'Pacifico', cursive, serif;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .mensaje-navidad {
+    color: #378944;
+    text-align: center;
+    margin-bottom: 28px;
+    font-size: 1.10em;
+    font-weight: 500;
+  }
+  label {
+    margin-top: 15px;
+    display: block;
+    font-weight: 600;
+    color: #206a38;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    margin-top: 8px;
+    border: 2px solid #54a044;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+    background-color: #fafafa;
+  }
+  input[type="text"]:focus {
+    border-color: #d63447;
+    outline: none;
+  }
+  button {
+    margin-top: 20px;
+    background-color: #d63447;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    font-size: 17px;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 700;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 6px #aaa;
+  }
+  button:hover:enabled {
+    background-color: #a02a36;
+  }
+  button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  #resultado {
+    margin-top: 25px;
+    background-color: #fff9ed;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #bfd8b8;
+    font-size: 18px;
+    min-height: 70px;
+  }
+  #resultado p {
+    margin: 10px 0;
+  }
+  #mensaje-error {
+    color: #d63447;
+    font-weight: 600;
+  }
+  .navidad-emoji {
+    font-size: 2.3em;
+    display: block;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+</style>
+<link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="navidad-emoji">🎄🍬🎁</div>
+  <h1>Endulzada Navideña</h1>
+  <div class="mensaje-navidad">
+    Ingresa tu cédula y descubre a quién debes endulzar, para celebrar la Navidad en equipo.
+  </div>
+
+  <label for="cedulaInput">Ingresa tu Cédula</label>
+  <input type="text" id="cedulaInput" placeholder="Ejemplo: 1010205368" autocomplete="off" disabled />
+
+  <button type="button" id="buscarBtn" onclick="buscarAsignado()" disabled>Buscar</button>
+  <div id="resultado">Cargando datos navideños, por favor espera...</div>
+
+<script>
+let datos = [];
+
+function activarBusqueda(activar) {
+  document.getElementById('cedulaInput').disabled = !activar;
+  document.getElementById('buscarBtn').disabled = !activar;
+}
+
+function buscarAsignado() {
+  const cedula = document.getElementById('cedulaInput').value.trim();
+  const resultadoDiv = document.getElementById('resultado');
+  
+  if (!cedula) {
+    resultadoDiv.innerHTML = '<p id="mensaje-error">Por favor, ingresa tu cédula.</p>';
+    return;
+  }
+
+  const encontrado = datos.find(item => item.cedula === cedula);
+  
+  if (encontrado) {
+    resultadoDiv.innerHTML = `
+      <p>Tu asignado es: <strong style="color:#378944;">${encontrado.asignadoNombre}</strong></p>
+      <p>Dulce que debes llevar: <strong style="color:#d63447;">${encontrado.dulce}</strong></p>
+      <div style="text-align:center;font-size:2em;margin-top:14px;">🍬🎉</div>
+    `;
+  } else {
+    resultadoDiv.innerHTML = '<p id="mensaje-error">Cédula no encontrada. Por favor verifica e intenta de nuevo.</p>';
+  }
+}
+
+// Carga el JSON externo
+fetch('datos.json')
+  .then(response => {
+    if (!response.ok) throw new Error('No se pudo cargar el archivo JSON.');
+    return response.json();
+  })
+  .then(jsonData => {
+    datos = jsonData;
+    document.getElementById('resultado').innerHTML = 'Datos cargados correctamente. Ya puedes buscar tu endulzada navideña.';
+    activarBusqueda(true);
+  })
+  .catch(error => {
+    document.getElementById('resultado').innerHTML = `<p id="mensaje-error">Error al cargar datos: ${error.message}</p>`;
+  });
+</script>
+</body>
+</html>
+
+
+
